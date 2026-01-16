@@ -26,6 +26,15 @@
   font-display: swap;
 }
 
+/* 导入 思源黑体 字体 */
+@font-face {
+  font-family: "NotoSansTC-Medium";
+  src: url("/assets/font/NotoSansTC-Medium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
