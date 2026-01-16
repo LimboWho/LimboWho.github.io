@@ -2,9 +2,11 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
+import { navigateToPage } from "@utils/navigation-utils";
 import { url } from "@utils/url-utils.ts";
 import { onMount } from "svelte";
 import type { SearchResult } from "@/global";
+import { panelManager } from "../utils/panel-manager.js";
 
 let keywordDesktop = "";
 let keywordMobile = "";
@@ -31,20 +33,30 @@ const fakeResult: SearchResult[] = [
 	},
 ];
 
-const togglePanel = () => {
-	const panel = document.getElementById("search-panel");
-	panel?.classList.toggle("float-panel-closed");
+const togglePanel = async () => {
+	await panelManager.togglePanel("search-panel");
 };
 
-const setPanelVisibility = (show: boolean, isDesktop: boolean): void => {
-	const panel = document.getElementById("search-panel");
-	if (!panel || !isDesktop) return;
+const setPanelVisibility = async (
+	show: boolean,
+	isDesktop: boolean,
+): Promise<void> => {
+	if (!isDesktop) return;
+	await panelManager.togglePanel("search-panel", show);
+};
 
-	if (show) {
-		panel.classList.remove("float-panel-closed");
-	} else {
-		panel.classList.add("float-panel-closed");
-	}
+const closeSearchPanel = async (): Promise<void> => {
+	await panelManager.closePanel("search-panel");
+	// 清空搜索关键词和结果
+	keywordDesktop = "";
+	keywordMobile = "";
+	result = [];
+};
+
+const handleResultClick = (event: Event, url: string): void => {
+	event.preventDefault();
+	closeSearchPanel();
+	navigateToPage(url);
 };
 
 const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
@@ -175,6 +187,7 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2">
     <!-- search results -->
     {#each result as item}
         <a href={item.url}
+           on:click={(e) => handleResultClick(e, item.url)}
            class="transition first-of-type:mt-2 lg:first-of-type:mt-0 group block
        rounded-xl text-lg px-3 py-2 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]">
             <div class="transition text-90 inline-flex font-bold group-hover:text-[var(--primary)]">
