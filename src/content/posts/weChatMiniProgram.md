@@ -1,7 +1,7 @@
 ---
 title: 微信小程序
 published: 2023-11-01
-tags: [微信小程序, 教程]
+tags: [微信小程序, 记录]
 category: 前端
 draft: false
 ---
